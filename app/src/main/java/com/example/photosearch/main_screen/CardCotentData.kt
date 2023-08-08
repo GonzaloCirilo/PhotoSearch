@@ -1,4 +1,4 @@
-package com.example.photosearch
+package com.example.photosearch.main_screen
 
 data class PhotoCardCotentData(
     val imageUrl: String,
