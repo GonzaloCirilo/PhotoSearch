@@ -1,8 +1,11 @@
 package com.example.photosearch.main_screen
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,8 +13,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -22,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.tv.foundation.lazy.grid.TvGridCells
 import androidx.tv.foundation.lazy.grid.TvGridItemSpan
 import androidx.tv.foundation.lazy.grid.TvLazyVerticalGrid
+import androidx.tv.foundation.lazy.grid.items
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.CompactCard
 import androidx.tv.material3.ExperimentalTvMaterial3Api
@@ -29,6 +36,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.IconButton
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import com.example.photosearch.R
 import com.example.photosearch.theme.Aquamarine
 import com.example.photosearch.theme.AquamarineDark
 import com.example.photosearch.theme.Dimens
@@ -36,15 +44,19 @@ import com.example.photosearch.theme.Gray
 import com.example.photosearch.theme.Gray700
 import com.example.photosearch.theme.Gray800
 import com.example.photosearch.theme.Typography
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun MainScreen() {
-    MainScreenContent()
+    val viewModel = MainScreenViewModel()
+    val screenState by viewModel.state.collectAsState()
+    MainScreenContent(screenState.photoCards)
 }
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
-fun MainScreenContent() {
+fun MainScreenContent(photoCards: ImmutableList<PhotoCardContentData>) {
     TvLazyVerticalGrid(
         modifier = Modifier
             .fillMaxSize()
@@ -53,10 +65,15 @@ fun MainScreenContent() {
                 start = Dimens.mainScreenPadding,
                 end = Dimens.mainScreenPadding
             ),
-        columns = TvGridCells.Adaptive(minSize = 300.dp)
+        columns = TvGridCells.Adaptive(minSize = 250.dp),
+        horizontalArrangement = Arrangement.spacedBy(24.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         item(span = { TvGridItemSpan(maxLineSpan) }) {
             MainComposableHeader()
+        }
+        items(photoCards) {
+            PhotoCardItemContent(it)
         }
 
     }
@@ -120,12 +137,23 @@ fun MainComposableHeader(modifier: Modifier = Modifier) {
 
 @ExperimentalTvMaterial3Api
 @Composable
-fun PhotoCardItemContent() {
+fun PhotoCardItemContent(photoCardContentData: PhotoCardContentData) {
     CompactCard(
         onClick = {},
-        image = {},
-        title = { Text("card title") },
-        subtitle = { Text(text = "cardSubtitle") },
+        image = {
+            Image(
+                modifier = Modifier.fillMaxHeight(),
+                painter = painterResource(id = R.mipmap.ic_launcher),
+                contentDescription = "Image"
+            )
+        },
+        title = { Text(photoCardContentData.title, modifier = Modifier.padding(start = 4.dp)) },
+        subtitle = {
+            Text(
+                text = photoCardContentData.subtitle,
+                modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+            )
+        },
     )
 
 }
@@ -136,6 +164,8 @@ fun PhotoCardItemContent() {
 @Composable
 fun MainScreenPreview() {
     MaterialTheme {
-        MainScreenContent()
+        MainScreenContent(List(50) {
+            PhotoCardContentData("", "Title $it", "Subtitle for photo $it")
+        }.toImmutableList())
     }
 }
