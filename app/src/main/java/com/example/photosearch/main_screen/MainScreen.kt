@@ -1,11 +1,10 @@
 package com.example.photosearch.main_screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -36,6 +35,9 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.IconButton
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import coil.compose.AsyncImagePainter
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
 import com.example.photosearch.R
 import com.example.photosearch.theme.Aquamarine
 import com.example.photosearch.theme.AquamarineDark
@@ -67,7 +69,8 @@ fun MainScreenContent(photoCards: ImmutableList<PhotoCardContentData>) {
             ),
         columns = TvGridCells.Adaptive(minSize = 250.dp),
         horizontalArrangement = Arrangement.spacedBy(24.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+        contentPadding = PaddingValues(bottom = 16.dp)
     ) {
         item(span = { TvGridItemSpan(maxLineSpan) }) {
             MainComposableHeader()
@@ -141,11 +144,17 @@ fun PhotoCardItemContent(photoCardContentData: PhotoCardContentData) {
     CompactCard(
         onClick = {},
         image = {
-            Image(
-                modifier = Modifier.fillMaxHeight(),
-                painter = painterResource(id = R.mipmap.ic_launcher),
-                contentDescription = "Image"
-            )
+            SubcomposeAsyncImage(
+                model = photoCardContentData.imageUrl,
+                contentDescription = "image"
+            ) {
+                when(painter.state){
+                    AsyncImagePainter.State.Empty -> painterResource(id = R.mipmap.error_image_generic)
+                    is AsyncImagePainter.State.Error -> painterResource(id = R.mipmap.error_image_generic)
+                    is AsyncImagePainter.State.Loading -> LoadingImageContainer()
+                    is AsyncImagePainter.State.Success -> SubcomposeAsyncImageContent()
+                }
+            }
         },
         title = { Text(photoCardContentData.title, modifier = Modifier.padding(start = 4.dp)) },
         subtitle = {

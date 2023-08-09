@@ -6,7 +6,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class MainScreenViewModel: ViewModel() {
+class MainScreenViewModel : ViewModel() {
 
     data class MainScreenState(
         val photoCards: ImmutableList<PhotoCardContentData>,
@@ -17,8 +17,14 @@ class MainScreenViewModel: ViewModel() {
 
     private var _state = MutableStateFlow(
         MainScreenState(
-        photoCards = List(40) { PhotoCardContentData("", "Title $it", "Subtitle of photo $it") }.toImmutableList()
-    )
+            photoCards = List(40) {
+                PhotoCardContentData(
+                    "https://p1.pxfuel.com/preview/402/676/56/shiba-dog-puppy-cute-japanese-inu.jpg",
+                    "Title $it",
+                    "Subtitle of photo $it"
+                )
+            }.toImmutableList()
+        )
     )
     val state = _state.asStateFlow()
 

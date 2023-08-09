@@ -8,6 +8,7 @@ object Typography {
         fontSize = 20.sp,
         color = Gray
     )
+
     val h1 = TextStyle (
         fontSize = 28.sp,
         color = Gray
