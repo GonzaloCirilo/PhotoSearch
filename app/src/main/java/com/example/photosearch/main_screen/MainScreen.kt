@@ -24,6 +24,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.tv.foundation.lazy.grid.TvGridCells
 import androidx.tv.foundation.lazy.grid.TvGridItemSpan
 import androidx.tv.foundation.lazy.grid.TvLazyVerticalGrid
@@ -46,19 +47,20 @@ import com.example.photosearch.theme.Gray
 import com.example.photosearch.theme.Gray700
 import com.example.photosearch.theme.Gray800
 import com.example.photosearch.theme.Typography
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
-fun MainScreen() {
-    val viewModel = MainScreenViewModel()
+fun MainScreen(viewModel: MainScreenViewModel = viewModel(), onSearchPressed: () -> Unit) {
     val screenState by viewModel.state.collectAsState()
-    MainScreenContent(screenState.photoCards)
+    MainScreenContent(screenState, onSearchPressed)
 }
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
-fun MainScreenContent(photoCards: ImmutableList<PhotoCardContentData>) {
+fun MainScreenContent(
+    state: MainScreenViewModel.MainScreenState,
+    onSearchPressed: () -> Unit
+) {
     TvLazyVerticalGrid(
         modifier = Modifier
             .fillMaxSize()
@@ -73,9 +75,9 @@ fun MainScreenContent(photoCards: ImmutableList<PhotoCardContentData>) {
         contentPadding = PaddingValues(bottom = 16.dp)
     ) {
         item(span = { TvGridItemSpan(maxLineSpan) }) {
-            MainComposableHeader()
+            MainComposableHeader(screenTitle = state.getScreenTitle(), onSearchPressed = onSearchPressed)
         }
-        items(photoCards) {
+        items(state.photoCards) {
             PhotoCardItemContent(it)
         }
 
@@ -84,12 +86,16 @@ fun MainScreenContent(photoCards: ImmutableList<PhotoCardContentData>) {
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
-fun MainComposableHeader(modifier: Modifier = Modifier) {
+fun MainComposableHeader(
+    modifier: Modifier = Modifier,
+    screenTitle: String,
+    onSearchPressed: () -> Unit
+) {
     Column {
         Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             IconButton(
                 modifier = Modifier.size(64.dp),
-                onClick = { /*TODO*/ },
+                onClick = { onSearchPressed() },
                 colors = ButtonDefaults.colors(
                     containerColor = Aquamarine,
                     pressedContainerColor = AquamarineDark,
@@ -125,14 +131,13 @@ fun MainComposableHeader(modifier: Modifier = Modifier) {
                                 append("flickr")
                             }
                         }
-
                     }
                 )
             }
         }
         Text(
             style = Typography.subtitle,
-            text = "Trending Now On Flickr",
+            text = screenTitle,
             modifier = Modifier.padding(top = Dimens.subtitleTopPadding),
         )
     }
@@ -145,10 +150,11 @@ fun PhotoCardItemContent(photoCardContentData: PhotoCardContentData) {
         onClick = {},
         image = {
             SubcomposeAsyncImage(
+                modifier = Modifier.fillMaxWidth(),
                 model = photoCardContentData.imageUrl,
-                contentDescription = "image"
+                contentDescription = "image",
             ) {
-                when(painter.state){
+                when (painter.state) {
                     AsyncImagePainter.State.Empty -> painterResource(id = R.mipmap.error_image_generic)
                     is AsyncImagePainter.State.Error -> painterResource(id = R.mipmap.error_image_generic)
                     is AsyncImagePainter.State.Loading -> LoadingImageContainer()
@@ -173,8 +179,11 @@ fun PhotoCardItemContent(photoCardContentData: PhotoCardContentData) {
 @Composable
 fun MainScreenPreview() {
     MaterialTheme {
-        MainScreenContent(List(50) {
-            PhotoCardContentData("", "Title $it", "Subtitle for photo $it")
-        }.toImmutableList())
+        MainScreenContent(
+            MainScreenViewModel.MainScreenState(
+                List(50) {
+                    PhotoCardContentData("", "Title $it", "Subtitle for photo $it")
+                }.toImmutableList()
+            ), {})
     }
 }
