@@ -1,48 +1,75 @@
 package com.example.photosearch.main_screen
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
+import com.example.domain.use_case.GetTrendingPhotosUseCase
+import com.example.domain.use_case.SearchPhotosUseCase
+import com.example.photosearch.paging.PagingConfiguration
+import com.example.photosearch.paging.SearchPhotosPagingSource
+import com.example.photosearch.paging.TrendingPhotosPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
-class MainScreenViewModel @Inject constructor() : ViewModel() {
+class MainScreenViewModel @Inject constructor(
+    private val getTrendingPhotosUseCase: GetTrendingPhotosUseCase,
+    private val searchPhotosUseCase: SearchPhotosUseCase,
+) : ViewModel() {
 
     data class MainScreenState(
-        val photoCards: ImmutableList<PhotoCardContentData>,
         val searchInput: String = "",
         val loadingContent: Boolean = false,
         val showingSearchResults: Boolean = false,
         val showingSearch: Boolean = false,
+    )
+
+    var pagedPhotoDataStream: Flow<PagingData<PhotoCardContentData>> = Pager(
+        config = PagingConfig(pageSize = PagingConfiguration.PAGE_SIZE),
     ) {
-        fun getScreenTitle(): String {
-            return when {
-                showingSearchResults.not() -> "Trending Now On Flickr"
-                showingSearchResults && photoCards.size > 0 -> "Search Results for \"$searchInput\""
-                else -> "No"
-            }
+        TrendingPhotosPagingSource(getTrendingPhotosUseCase)
+    }.flow.cachedIn(viewModelScope).map { pg ->
+        pg.map {
+            PhotoCardContentData(
+                imageUrl = it.photoUrl,
+                title = it.title,
+                subtitle = it.subtitle
+            )
         }
     }
+        private set
 
-    private var _state = MutableStateFlow(
-        MainScreenState(
-            photoCards = List(40) {
-                PhotoCardContentData(
-                    "https://p1.pxfuel.com/preview/402/676/56/shiba-dog-puppy-cute-japanese-inu.jpg",
-                    "Title $it",
-                    "Subtitle of photo $it"
-                )
-            }.toImmutableList()
-        )
-    )
+    private var _state = MutableStateFlow(MainScreenState())
     val state = _state.asStateFlow()
 
 
     fun onSearchSubmitted(query: String) {
-        _state.value = _state.value.copy(searchInput = query, showingSearch = false, showingSearchResults = true)
+        _state.value = _state.value.copy(
+            searchInput = query,
+            showingSearch = false,
+            showingSearchResults = true
+        )
+        pagedPhotoDataStream = Pager(
+            config = PagingConfig(pageSize = PagingConfiguration.PAGE_SIZE),
+        ) {
+            SearchPhotosPagingSource(searchPhotosUseCase, query)
+        }.flow.cachedIn(viewModelScope).map { pg ->
+            pg.map {
+                PhotoCardContentData(
+                    imageUrl = it.photoUrl,
+                    title = it.title,
+                    subtitle = it.subtitle
+                )
+            }
+        }
     }
 
     fun showSearchScreen() {

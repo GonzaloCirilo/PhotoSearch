@@ -25,10 +25,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.tv.foundation.lazy.grid.TvGridCells
 import androidx.tv.foundation.lazy.grid.TvGridItemSpan
 import androidx.tv.foundation.lazy.grid.TvLazyVerticalGrid
-import androidx.tv.foundation.lazy.grid.items
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.CompactCard
 import androidx.tv.material3.ExperimentalTvMaterial3Api
@@ -47,20 +49,27 @@ import com.example.photosearch.theme.Gray
 import com.example.photosearch.theme.Gray700
 import com.example.photosearch.theme.Gray800
 import com.example.photosearch.theme.Typography
-import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.flow
 
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel = viewModel(), onSearchPressed: () -> Unit) {
     val screenState by viewModel.state.collectAsState()
-    MainScreenContent(screenState, onSearchPressed)
+    val photos = viewModel.pagedPhotoDataStream.collectAsLazyPagingItems()
+    MainScreenContent(screenState, photos, onSearchPressed)
 }
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun MainScreenContent(
     state: MainScreenViewModel.MainScreenState,
+    photos: LazyPagingItems<PhotoCardContentData>,
     onSearchPressed: () -> Unit
 ) {
+    val screenTitle = when {
+        state.showingSearchResults.not() -> "Trending Now On Flickr"
+        state.showingSearchResults && photos.itemCount > 0 -> "Search Results for \"${state.searchInput}\""
+        else -> "No search results for ${state.searchInput}"
+    }
     TvLazyVerticalGrid(
         modifier = Modifier
             .fillMaxSize()
@@ -75,12 +84,14 @@ fun MainScreenContent(
         contentPadding = PaddingValues(bottom = 16.dp)
     ) {
         item(span = { TvGridItemSpan(maxLineSpan) }) {
-            MainComposableHeader(screenTitle = state.getScreenTitle(), onSearchPressed = onSearchPressed)
+            MainComposableHeader(
+                screenTitle = screenTitle,
+                onSearchPressed = onSearchPressed
+            )
         }
-        items(state.photoCards) {
-            PhotoCardItemContent(it)
+        items(photos.itemCount) { index ->
+            photos[index]?.let { PhotoCardItemContent(it) }
         }
-
     }
 }
 
@@ -178,12 +189,20 @@ fun PhotoCardItemContent(photoCardContentData: PhotoCardContentData) {
 @Preview(showBackground = true, widthDp = 1920, heightDp = 1080)
 @Composable
 fun MainScreenPreview() {
+    val photos = flow<PagingData<PhotoCardContentData>> {
+        PagingData.from(
+            listOf(
+                PhotoCardContentData(
+                    imageUrl = "",
+                    title = "",
+                    subtitle = ""
+                )
+            )
+        )
+    }
     MaterialTheme {
         MainScreenContent(
-            MainScreenViewModel.MainScreenState(
-                List(50) {
-                    PhotoCardContentData("", "Title $it", "Subtitle for photo $it")
-                }.toImmutableList()
-            ), {})
+            MainScreenViewModel.MainScreenState(),
+            photos.collectAsLazyPagingItems(), {})
     }
 }
