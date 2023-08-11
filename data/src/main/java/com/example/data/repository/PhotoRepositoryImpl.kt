@@ -10,12 +10,16 @@ class PhotoRepositoryImpl @Inject constructor(
     private val photoSearchApi: PhotoSearchApi,
 ) : PhotoRepository {
     override suspend fun getTrendingPhotos(pageNumber: Int, pageSize: Int): PhotoPage {
-        return PhotoMapper.map(
-            photoSearchApi.getTrendingPhotos(
-                page = pageNumber,
-                itemsPerPage = pageSize
+        try {
+            return PhotoMapper.map(
+                photoSearchApi.getTrendingPhotos(
+                    page = pageNumber,
+                    itemsPerPage = pageSize
+                ).photos
             )
-        )
+        } catch (e: Exception) {
+            throw e
+        }
     }
 
     override suspend fun serachPhotos(
@@ -28,7 +32,7 @@ class PhotoRepositoryImpl @Inject constructor(
                 searchText = searchQuery,
                 itemsPerPage = pageSize,
                 page = pageNumber
-            )
+            ).photos
         )
     }
 

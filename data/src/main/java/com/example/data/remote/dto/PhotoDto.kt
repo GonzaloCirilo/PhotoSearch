@@ -9,13 +9,7 @@ data class PhotoDto(
     val server: String,
     val farm: Long,
     val title: String,
-    @SerializedName("ispublic")
-    val isPublic: Int,
-    @SerializedName("isfriend")
-    val isFriend: Int,
-    @SerializedName("isfamily")
-    val isFamily: Int,
-    @SerializedName("ispublic")
+    @SerializedName("dateupload")
     val dateUpload: Long,
     @SerializedName("ownername")
     val ownerName: String,
