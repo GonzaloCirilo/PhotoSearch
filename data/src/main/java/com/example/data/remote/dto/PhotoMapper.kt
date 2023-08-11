@@ -23,7 +23,7 @@ object PhotoMapper {
     }
 
     private fun PhotosDto.getNextPage(): Int? {
-        val nextPage = if (page == pages) null else page + 1
+        val nextPage = if (page >= pages) null else page + 1
         return nextPage?.toInt()
     }
 
