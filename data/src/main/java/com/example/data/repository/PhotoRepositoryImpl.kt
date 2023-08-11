@@ -31,7 +31,8 @@ class PhotoRepositoryImpl @Inject constructor(
             photoSearchApi.searchPhotos(
                 searchText = searchQuery,
                 itemsPerPage = pageSize,
-                page = pageNumber
+                page = pageNumber,
+                tags = searchQuery
             ).photos
         )
     }

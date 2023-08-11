@@ -8,9 +8,11 @@ interface PhotoSearchApi {
 
     @GET("rest/")
     suspend fun getTrendingPhotos(
-        @Query("method") method: String = FlickerApiConstants.GET_RECENT_PHOTOS_METHOD,
+        // Disabling FlickerApiConstants.GET_RECENT_PHOTOS_METHOD to avoid inappropriate content
+        // @Query("method") method: String = FlickerApiConstants.GET_RECENT_PHOTOS_METHOD,
+        @Query("method") method: String = FlickerApiConstants.SEARCH_PHOTOS_METHOD,
         @Query("extras") extraInfo: String = "owner_name,date_upload",
-        @Query("user_id") userId: String = "user-id",
+        @Query("tags") tags: String = "animal", // Define a tag to avoid inappropriate content
         @Query("per_page") itemsPerPage: Int,
         @Query("page") page: Int,
     ): PhotosWrapperDto
@@ -20,6 +22,7 @@ interface PhotoSearchApi {
         @Query("method") method: String = FlickerApiConstants.SEARCH_PHOTOS_METHOD,
         @Query("extras") extraInfo: String = "owner_name,date_upload",
         @Query("text") searchText: String,
+        @Query("tags") tags:String,
         @Query("safe_search") safeSearch: Int = 1,
         @Query("per_page") itemsPerPage: Int,
         @Query("page") page: Int,
