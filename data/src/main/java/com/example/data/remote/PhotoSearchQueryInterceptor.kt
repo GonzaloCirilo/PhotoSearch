@@ -9,7 +9,6 @@ class PhotoSearchQueryInterceptor : Interceptor {
             addQueryParameter("nojsoncallback", "1")
             addQueryParameter("format", "json")
             addQueryParameter("api_key", "Your-api-key-here")
-            addQueryParameter("user_id", "your-user-id")
         }.build()
         val request = chain.request().newBuilder().url(newUrl).build()
         return chain.proceed(request)
