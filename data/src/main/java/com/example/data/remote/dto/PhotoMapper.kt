@@ -12,8 +12,8 @@ object PhotoMapper {
         return PhotoPage(
             photos = photosDto.photo.map {
                 Photo(
-                    title = it.title,
-                    subtitle = "${it.ownerName} / ${it.dateUpload.toFormattedDate()}",
+                    title = it.title.ifEmpty { "No Title" },
+                    subtitle = "${it.ownerName.ifEmpty { "No Author" }} / ${it.dateUpload.toFormattedDate()}",
                     photoUrl = "${FlickerApiConstants.IMAGE_BASE_URL}/${it.server}/${it.id}_${it.secret}_z.jpg"
                 )
             },
