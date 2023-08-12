@@ -1,4 +1,4 @@
-package com.example.photosearch.main_screen
+package com.example.photosearch.main_screen.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -27,11 +27,16 @@ import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.example.photosearch.R
+import com.example.photosearch.main_screen.ASPECT_RATIO_16_9
+import com.example.photosearch.main_screen.PhotoCardContentData
 
 @OptIn(ExperimentalFoundationApi::class)
 @ExperimentalTvMaterial3Api
 @Composable
-fun PhotoCardItemContent(photoCardContentData: PhotoCardContentData) {
+fun PhotoCardItemContent(
+    photoCardContentData: PhotoCardContentData,
+    isStaggered: Boolean,
+) {
     var titleModifier by remember {
         mutableStateOf(Modifier.padding(4.dp))
     }
@@ -65,12 +70,18 @@ fun PhotoCardItemContent(photoCardContentData: PhotoCardContentData) {
                     AsyncImagePainter.State.Empty -> painterResource(id = R.mipmap.error_image_generic)
                     is AsyncImagePainter.State.Error -> painterResource(id = R.mipmap.error_image_generic)
                     is AsyncImagePainter.State.Loading -> LoadingImageContainer()
-                    is AsyncImagePainter.State.Success -> SubcomposeAsyncImageContent(
-                        modifier = Modifier.aspectRatio(
-                            ASPECT_RATIO_16_9
-                        ),
-                        contentScale = ContentScale.Crop
-                    )
+                    is AsyncImagePainter.State.Success -> {
+                        if (isStaggered) {
+                            SubcomposeAsyncImageContent(contentScale = ContentScale.Fit)
+                        } else {
+                            SubcomposeAsyncImageContent(
+                                modifier = Modifier.aspectRatio(
+                                    ASPECT_RATIO_16_9
+                                ),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
                 }
             }
         },

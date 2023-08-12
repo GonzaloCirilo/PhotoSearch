@@ -1,15 +1,11 @@
 package com.example.photosearch.main_screen
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
@@ -25,19 +21,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.tv.foundation.lazy.grid.TvGridCells
-import androidx.tv.foundation.lazy.grid.TvGridItemSpan
-import androidx.tv.foundation.lazy.grid.TvLazyVerticalGrid
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Icon
 import androidx.tv.material3.IconButton
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import com.example.photosearch.main_screen.components.PhotoRegularGrid
+import com.example.photosearch.main_screen.components.PhotoStaggeredGrid
 import com.example.photosearch.theme.Aquamarine
 import com.example.photosearch.theme.AquamarineDark
 import com.example.photosearch.theme.Dimens
@@ -56,7 +50,6 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel(), onSearchPressed: ()
     MainScreenContent(screenState, photos, onSearchPressed)
 }
 
-@OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun MainScreenContent(
     state: MainScreenViewModel.MainScreenState,
@@ -68,35 +61,12 @@ fun MainScreenContent(
         state.showingSearchResults && photos.itemCount > 0 -> "Search Results for \"${state.searchInput}\""
         else -> "No search results for ${state.searchInput}"
     }
-    TvLazyVerticalGrid(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                top = Dimens.mainScreenPadding,
-                start = Dimens.mainScreenPadding,
-                end = Dimens.mainScreenPadding
-            ),
-        columns = TvGridCells.Adaptive(minSize = 250.dp),
-        horizontalArrangement = Arrangement.spacedBy(24.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-        contentPadding = PaddingValues(bottom = 16.dp)
-    ) {
-        item(span = { TvGridItemSpan(maxLineSpan) }) {
-            MainComposableHeader(
-                screenTitle = screenTitle,
-                onSearchPressed = onSearchPressed
-            )
-        }
-        items(photos.itemCount) { index ->
-            photos[index]?.let { PhotoCardItemContent(it) }
-        }
-        if(photos.loadState.refresh == LoadState.Loading || photos.loadState.append == LoadState.Loading) {
-            item(span = { TvGridItemSpan(maxLineSpan) }) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    CircularProgressIndicator(modifier = Modifier.size(32.dp))
-                }
-            }
-        }
+    val staggered = state.showingSearchResults
+
+    if (staggered) {
+        PhotoStaggeredGrid(screenTitle = screenTitle, photos = photos, onSearchPressed = onSearchPressed)
+    } else {
+        PhotoRegularGrid(screenTitle = screenTitle, photos = photos, onSearchPressed = onSearchPressed)
     }
 }
 

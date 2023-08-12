@@ -1,4 +1,4 @@
-package com.example.photosearch.main_screen
+package com.example.photosearch.main_screen.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
