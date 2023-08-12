@@ -13,6 +13,7 @@ interface PhotoSearchApi {
         @Query("method") method: String = FlickerApiConstants.SEARCH_PHOTOS_METHOD,
         @Query("extras") extraInfo: String = "owner_name,date_upload",
         @Query("tags") tags: String = "animal", // Define a tag to avoid inappropriate content
+        @Query("safe_search") safeSearch: Int = 1,
         @Query("per_page") itemsPerPage: Int,
         @Query("page") page: Int,
     ): PhotosWrapperDto
