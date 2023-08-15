@@ -9,6 +9,6 @@ internal class SearchPhotosUseCaseImpl @Inject constructor(
 ): SearchPhotosUseCase {
 
     override suspend fun execute(query: String, pageSize: Int, pageNumber: Int): PhotoPage {
-        return photoRepository.serachPhotos(pageNumber, pageSize, query)
+        return photoRepository.searchPhotos(pageNumber, pageSize, query)
     }
 }

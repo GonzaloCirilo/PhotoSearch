@@ -19,7 +19,7 @@ class PhotoRepositoryMock : PhotoRepository {
         return getTrendingPhotosMock(pageNumber, pageSize)
     }
 
-    override suspend fun serachPhotos(
+    override suspend fun searchPhotos(
         pageNumber: Int,
         pageSize: Int,
         searchQuery: String

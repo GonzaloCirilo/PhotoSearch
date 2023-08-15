@@ -9,6 +9,7 @@ buildscript {
         hilt_dagger_version = "2.44"
         hilt_compiler_version = "1.0.0"
         hilt_compose_version = "1.0.0"
+        lifecycle_version = "2.6.1"
     }
     repositories {
         mavenCentral()

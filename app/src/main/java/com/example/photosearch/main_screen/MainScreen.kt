@@ -147,6 +147,6 @@ fun MainScreenPreview() {
     MaterialTheme {
         MainScreenContent(
             MainScreenViewModel.MainScreenState(),
-            photos.collectAsLazyPagingItems(), {})
+            photos.collectAsLazyPagingItems()) {}
     }
 }

@@ -19,7 +19,7 @@ internal interface DomainModule {
     ): GetTrendingPhotosUseCase
 
     @Binds
-    fun provideSearchPhotosUseCasae (
+    fun provideSearchPhotosUseCase (
         searchPhotosUseCaseImpl: SearchPhotosUseCaseImpl
     ): SearchPhotosUseCase
 

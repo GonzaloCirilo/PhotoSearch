@@ -17,5 +17,5 @@ interface PhotoRepository {
      * @param pageSize Size of each page
      * @param searchQuery String containing the query to use to search photos
      */
-    suspend fun serachPhotos(pageNumber: Int, pageSize: Int, searchQuery: String): PhotoPage
+    suspend fun searchPhotos(pageNumber: Int, pageSize: Int, searchQuery: String): PhotoPage
 }

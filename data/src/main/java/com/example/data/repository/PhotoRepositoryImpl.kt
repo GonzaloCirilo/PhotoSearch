@@ -22,7 +22,7 @@ class PhotoRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun serachPhotos(
+    override suspend fun searchPhotos(
         pageNumber: Int,
         pageSize: Int,
         searchQuery: String
