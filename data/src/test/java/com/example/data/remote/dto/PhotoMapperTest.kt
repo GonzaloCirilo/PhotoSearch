@@ -1,6 +1,7 @@
 package com.example.data.remote.dto
 
 import com.example.data.remote.FlickerApiConstants
+import com.example.data.remote.dto.mapper.PhotoMapper
 import org.junit.Assert
 import org.junit.Test
 

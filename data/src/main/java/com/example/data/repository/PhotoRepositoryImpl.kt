@@ -1,7 +1,7 @@
 package com.example.data.repository
 
 import com.example.data.remote.PhotoSearchApi
-import com.example.data.remote.dto.PhotoMapper
+import com.example.data.remote.dto.mapper.PhotoMapper
 import com.example.domain.model.PhotoPage
 import com.example.domain.repository.PhotoRepository
 import javax.inject.Inject

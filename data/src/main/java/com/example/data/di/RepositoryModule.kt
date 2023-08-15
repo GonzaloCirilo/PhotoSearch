@@ -1,6 +1,7 @@
-package com.example.data.repository
+package com.example.data.di
 
 import com.example.data.remote.PhotoSearchApi
+import com.example.data.repository.PhotoRepositoryImpl
 import com.example.domain.repository.PhotoRepository
 import dagger.Module
 import dagger.Provides

@@ -1,5 +1,8 @@
-package com.example.data.remote
+package com.example.data.di
 
+import com.example.data.remote.FlickerApiConstants
+import com.example.data.remote.PhotoSearchApi
+import com.example.data.remote.PhotoSearchQueryInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

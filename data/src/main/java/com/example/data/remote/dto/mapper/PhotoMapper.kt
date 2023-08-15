@@ -1,6 +1,7 @@
-package com.example.data.remote.dto
+package com.example.data.remote.dto.mapper
 
 import com.example.data.remote.FlickerApiConstants
+import com.example.data.remote.dto.PhotosDto
 import com.example.domain.model.Photo
 import com.example.domain.model.PhotoPage
 import java.text.SimpleDateFormat

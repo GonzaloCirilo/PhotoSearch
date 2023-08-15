@@ -1,5 +1,5 @@
 package com.example.data.remote.dto
 
-data class PhotosWrapperDto (
+data class PhotosResponseDto (
     val photos: PhotosDto
 )

@@ -1,6 +1,6 @@
 package com.example.data.remote
 
-import com.example.data.remote.dto.PhotosWrapperDto
+import com.example.data.remote.dto.PhotosResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -16,7 +16,7 @@ interface PhotoSearchApi {
         @Query("safe_search") safeSearch: Int = 1,
         @Query("per_page") itemsPerPage: Int,
         @Query("page") page: Int,
-    ): PhotosWrapperDto
+    ): PhotosResponseDto
 
     @GET("rest/")
     suspend fun searchPhotos(
@@ -27,7 +27,7 @@ interface PhotoSearchApi {
         @Query("safe_search") safeSearch: Int = 1,
         @Query("per_page") itemsPerPage: Int,
         @Query("page") page: Int,
-    ): PhotosWrapperDto
+    ): PhotosResponseDto
 
 
 }
