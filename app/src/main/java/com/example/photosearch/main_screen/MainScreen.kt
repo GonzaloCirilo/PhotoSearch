@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -58,7 +59,7 @@ fun MainScreenContent(
 ) {
     val screenTitle = when {
         state.showingSearchResults.not() -> "Trending Now On Flickr"
-        state.showingSearchResults && photos.itemCount > 0 -> "Search Results for \"${state.searchInput}\""
+        state.showingSearchResults && (photos.itemCount > 0 || photos.loadState.refresh == LoadState.Loading) -> "Search Results for \"${state.searchInput}\""
         else -> "No search results for ${state.searchInput}"
     }
     val staggered = state.showingSearchResults
